@@ -25,14 +25,4 @@ Meteor.publish("availableUsers", function () {
     }
 
     return allUsers
-
-    return allUsers.map(user => {
-        const { emails, profile: { role }, _id } = user
-        return {
-            email: emails[0],
-            role
-
-        }
-    })
-
 })

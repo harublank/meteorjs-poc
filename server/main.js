@@ -7,7 +7,7 @@ const SEED_PASSWORD = "keelapw"
 
 const ORGANIZATION_ADMIN_EMAIL = 'orgadmin@keela.com'
 
-const ROLES = {
+export const ROLES = {
   KEELA_ADMIN: "KEELA_ADMIN",
   ORGANIZATION_ADMIN: "ORGANIZATION_ADMIN",
   COORDINATOR: "COORDINATOR"

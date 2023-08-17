@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
 import { Meteor } from 'meteor/meteor';
-import Button from '../ui/ButtonVue.vue'
 import { Tracker } from 'meteor/tracker';
-import { Session } from 'meteor/session';
+import { reactive, ref } from 'vue';
+import Button from '../components/ButtonVue.vue';
 
 const userCredendials = reactive({
     email: "",
