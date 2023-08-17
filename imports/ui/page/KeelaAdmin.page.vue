@@ -1,8 +1,7 @@
 <script lang="js" setup>
 import AuthGuard from '../components/AuthGuard.vue'
-import { ROLES } from '../../../server/main'
 
-const requiredRole = ROLES.KEELA_ADMIN
+const requiredRole = "KEELA_ADMIN"
 </script>
 
 <template>

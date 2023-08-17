@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { reactive, ref } from 'vue';
 import Button from '../components/ButtonVue.vue';
+import SpinnerVue from '../components/SpinnerVue.vue';
 
 const userCredendials = reactive({
     email: "",
@@ -58,14 +59,17 @@ const onShowAllAvailableUsers = () => {
     })
 }
 </script> 
-
+z
 <template>
     <div class="flex gap-8">
         <div>
             <h1>{{ loggedInUser && `${loggedInUser?.emails?.[0].address} is logged in. ` || ` noone is
                 logged in` }}
             </h1>
-            <h1>Logging request Status: {{ isLogginIn ? "Logging User" : "Not Logging User" }}</h1>
+            <SpinnerVue v-if="isLogginIn"></SpinnerVue>
+
+            <h1>Logging request Status: {{ isLogginIn ? "Logging User" : "Not Logging User" }}
+            </h1>
             <form class="max-w-xs" @submit.prevent="handleSubmit">
                 <div>
                     <input class="w-full border mb-2 p-1" type="email" placeholder="johndoe@keela.com" required
