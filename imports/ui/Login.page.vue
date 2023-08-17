@@ -1,33 +1,109 @@
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import { Meteor } from 'meteor/meteor';
+import Button from '../ui/ButtonVue.vue'
+import { Tracker } from 'meteor/tracker';
+import { Session } from 'meteor/session';
 
 const userCredendials = reactive({
     email: "",
     password: ""
 })
 
+const availableUsers = reactive({
+    users: []
+})
+const errorMessage = ref("")
+
+const isLogginIn = Meteor.loggingIn()
+const loggedInUser = Meteor.user()
 
 const handleSubmit = () => {
     const { email, password } = userCredendials
-    console.log({ email, password })
+
+    const loginResponse = Meteor.loginWithPassword({ email }, password, (e) => {
+        if (e) {
+            const { error, reason } = e
+            errorMessage.value = reason
+        }
+    })
+    const loggedInUser = Meteor.user()
+    console.log({ loggedInUser, loginResponse })
 }
 
+const onShowAllAvailableUsers = () => {
+    // const availableUsers = 
+
+    const availableUsersSubscription = Meteor.subscribe("availableUsers")
+    Tracker.autorun(() => {
+        const isNotReady = availableUsersSubscription.ready() === false
+
+        if (isNotReady) {
+            //
+        }
+
+        const users = Meteor.users.find({}, {
+            transform: function (doc) {
+                const { emails, profile: { role }, _id } = doc
+                return {
+                    _id,
+                    email: emails[0].address,
+                    role
+
+                }
+            }
+        }).fetch()
+
+        availableUsers.users = users
+
+    })
+}
 </script> 
 
 <template>
-    <form class="max-w-xs" @submit.prevent="handleSubmit">
+    <div class="flex gap-8">
         <div>
-            <input class="w-full border mb-2 p-1" type="email" placeholder="johndoe@keela.com" required
-                v-model="userCredendials.email">
+            <h1>{{ loggedInUser && `${loggedInUser?.emails?.[0].address} is logged in. ` || ` noone is
+                logged in` }}
+            </h1>
+            <h1>Logging request Status: {{ isLogginIn ? "Logging User" : "Not Logging User" }}</h1>
+            <form class="max-w-xs" @submit.prevent="handleSubmit">
+                <div>
+                    <input class="w-full border mb-2 p-1" type="email" placeholder="johndoe@keela.com" required
+                        v-model="userCredendials.email">
+                </div>
+
+                <div>
+                    <input class="w-full border mb-2 p-1 " type="text" placeholder="fdfUIUI3#$#$#5" required
+                        v-model="userCredendials.password" />
+                </div>
+
+                <p class="text-red-700">
+                    {{ errorMessage }}
+                </p>
+                <Button class="w-full" type="submit">
+                    login
+                </Button>
+            </form>
         </div>
 
         <div>
-            <input class="w-full border mb-2 p-1 " type="password" placeholder="fdfUIUI3#$#$#5" required
-                v-model="userCredendials.password" />
-        </div>
+            <h3>Helpers</h3>
+            <Button class="mr-4" @click="Meteor.logout()">
+                Logout
+            </Button>
+            <Button @click="onShowAllAvailableUsers">
+                SHow all available users
+            </Button>
 
-        <button class="bg-blue-700 text-white px-2 py-1 w-full" type="submit">
-            login
-        </button>
-    </form>
+            <ul v-if="availableUsers.users.length > 0">
+                <li>password is "keelapw"</li>
+
+                <li v-for="user in  availableUsers.users" v-key="user._id">
+                    {{ user.email }} - {{ user.role }}
+                </li>
+            </ul>
+
+        </div>
+    </div>
 </template>

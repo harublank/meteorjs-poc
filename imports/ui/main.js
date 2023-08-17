@@ -11,3 +11,5 @@ Meteor.startup(() => {
   app.use(VueMeteor)
   app.mount('#app')
 })
+
+// Meteor.subscribe("availableUsers")

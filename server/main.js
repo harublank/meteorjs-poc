@@ -1,31 +1,39 @@
 import { Meteor } from 'meteor/meteor'
-import { LinksCollection } from '/imports/api/links'
+import { Accounts } from 'meteor/accounts-base'
+import { } from '../imports/api/endpoints/users'
 
-async function insertLink({ title, url }) {
-  await LinksCollection.insertAsync({ title, url, createdAt: new Date() })
+const SEED_EMAIL = "keelaadmin@keela.com"
+const SEED_PASSWORD = "keelapw"
+
+const ORGANIZATION_ADMIN_EMAIL = 'orgadmin@keela.com'
+
+const ROLES = {
+  KEELA_ADMIN: "KEELA_ADMIN",
+  ORGANIZATION_ADMIN: "ORGANIZATION_ADMIN",
+  COORDINATOR: "COORDINATOR"
 }
 
 Meteor.startup(async () => {
-  // If the Links collection is empty, add some data.
-  if ((await LinksCollection.find().countAsync()) === 0) {
-    await insertLink({
-      title: 'Do the Tutorial',
-      url: 'https://vuejs.org/guide/quick-start.html',
-    })
+  const userNotFound = Boolean(Accounts.findUserByEmail(SEED_EMAIL)) === false
 
-    await insertLink({
-      title: 'Follow the Guide',
-      url: 'https://guide.meteor.com',
+  if (userNotFound) {
+    console.log(`creating a seed  user with email ${SEED_EMAIL}`)
+    Accounts.createUser({
+      email: SEED_EMAIL, password: SEED_PASSWORD,
+      profile: {
+        role: ROLES.KEELA_ADMIN
+      }
     })
+  }
 
-    await insertLink({
-      title: 'Read the Docs',
-      url: 'https://docs.meteor.com',
-    })
-
-    await insertLink({
-      title: 'Discussions',
-      url: 'https://forums.meteor.com',
+  const organizationAdminNotFound = Boolean(Accounts.findUserByEmail(ORGANIZATION_ADMIN_EMAIL)) === false
+  if (organizationAdminNotFound) {
+    console.log(`creating organization admin with email ${ORGANIZATION_ADMIN_EMAIL}`)
+    Accounts.createUser({
+      email: ORGANIZATION_ADMIN_EMAIL, password: SEED_PASSWORD,
+      profile: {
+        role: ROLES.ORGANIZATION_ADMIN
+      }
     })
   }
 })
