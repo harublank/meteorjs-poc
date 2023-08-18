@@ -12,6 +12,7 @@
     "@babel/runtime": "^7.17.9",
     "bcrypt": "^5.1.1",
     "meteor-node-stubs": "^1.2.1",
+    "simpl-schema": "^3.4.1",
     "vue": "^3.2.45",
     "vue-meteor-tracker": "^3.0.0-beta.7",
     "vue-router": "^4.1.6"

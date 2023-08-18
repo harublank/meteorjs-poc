@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
-import { reactive, ref } from 'vue';
+import { reactive, ref, } from 'vue';
+import { useRouter } from 'vue-router';
 import Button from '../components/ButtonVue.vue';
 import SpinnerVue from '../components/SpinnerVue.vue';
+import { ROLE_BASED_PAGE } from "../data"
 
 const userCredendials = reactive({
     email: "",
@@ -15,25 +17,38 @@ const availableUsers = reactive({
 })
 const errorMessage = ref("")
 
+const router = useRouter()
+
 const isLogginIn = Meteor.loggingIn()
 const loggedInUser = Meteor.user()
+
+
 
 const handleSubmit = () => {
     const { email, password } = userCredendials
 
     const loginResponse = Meteor.loginWithPassword({ email }, password, (e) => {
         if (e) {
-            const { error, reason } = e
+            const { reason } = e
             errorMessage.value = reason
+        } else {
+            const loggedInUser = Meteor.user()
+            if (loggedInUser === null) {
+                alert("login first")
+                return
+            }
+            const { profile: { role } } = loggedInUser
+            const pageUrl = ROLE_BASED_PAGE[role]
+            router.push(pageUrl)
         }
+
+
     })
-    const loggedInUser = Meteor.user()
-    console.log({ loggedInUser, loginResponse })
+
 }
 
 const onShowAllAvailableUsers = () => {
-    // const availableUsers = 
-
+    console.log("show available users")
     const availableUsersSubscription = Meteor.subscribe("availableUsers")
     Tracker.autorun(() => {
         const isNotReady = availableUsersSubscription.ready() === false
@@ -54,12 +69,13 @@ const onShowAllAvailableUsers = () => {
             }
         }).fetch()
 
+        console.log({ users })
         availableUsers.users = users
 
     })
 }
 </script> 
-z
+
 <template>
     <div class="flex gap-8">
         <div>
@@ -102,7 +118,7 @@ z
             <ul v-if="availableUsers.users.length > 0">
                 <li>password is "keelapw"</li>
 
-                <li v-for="user in  availableUsers.users" v-key="user._id">
+                <li v-for="user in  availableUsers.users" :key="user.email">
                     {{ user.email }} - {{ user.role }}
                 </li>
             </ul>

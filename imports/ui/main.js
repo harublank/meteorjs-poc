@@ -12,4 +12,3 @@ Meteor.startup(() => {
   app.mount('#app')
 })
 
-// Meteor.subscribe("availableUsers")
