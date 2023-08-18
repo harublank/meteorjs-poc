@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
 import '../imports/api/users'
-
+import { organizationCollection } from '../imports/api/organization'
 const SEED_EMAIL = "keelaadmin@keela.com"
 const SEED_PASSWORD = "keelapw"
 
