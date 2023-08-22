@@ -1,22 +1,23 @@
 import { Mongo } from "meteor/mongo";
+import { Meteor } from "meteor/meteor";
 import SimpleSchema from "simpl-schema";
 
 export const organizationCollection = new Mongo.Collection('organization')
 
-const organizationSchema = new SimpleSchema({
-    name: {
-        type: String,
-        label: "Organization Name"
+
+organizationCollection.allow({
+    insert: function () {
+        return true
     },
-    address: {
-        type: String,
-        label: "Address"
+    update: function () {
+        return true
     },
-    number: {
-        type: Number,
-        label: "Contact Number"
-    }
+    remove: function (userId, doc) {
+        const isMyDoc = doc.userId === userId
+        return isMyDoc ? true : false
+    },
 
 })
-// organizationCollection.attatchSchema(organizationSchema)
-
+// Meteor.publish('organizationData', function () {
+//     return organizationCollection.find({})
+// })

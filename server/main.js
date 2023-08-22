@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
 import '../imports/api/users'
 import { organizationCollection } from '../imports/api/organization'
+import { contactsCollection } from '../imports/api/contacts'
 const SEED_EMAIL = "keelaadmin@keela.com"
 const SEED_PASSWORD = "keelapw"
 
@@ -12,6 +13,14 @@ const ROLES = {
   ORGANIZATION_ADMIN: "ORGANIZATION_ADMIN",
   COORDINATOR: "COORDINATOR"
 }
+
+Meteor.publish('organizationData', function () {
+  return organizationCollection.find({})
+})
+
+Meteor.publish("contactsCollection", function () {
+  return contactsCollection.find({})
+})
 
 Meteor.startup(async () => {
   const userNotFound = Boolean(Accounts.findUserByEmail(SEED_EMAIL)) === false

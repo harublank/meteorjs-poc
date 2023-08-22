@@ -1,4 +1,16 @@
-import { Mongo } from "meteor/mongo";
+import { Mongo } from 'meteor/mongo'
 
-export const contacts = new Mongo.Collection('contacts')
+export const contactsCollection = new Mongo.Collection("contacts")
+
+contactsCollection.allow({
+    insert: function (I) {
+        return true
+    },
+    update: function () {
+        return true
+    },
+    remove: function () {
+        return true
+    }
+})
 
