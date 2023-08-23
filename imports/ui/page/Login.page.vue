@@ -27,7 +27,7 @@ const loggedInUser = Meteor.user()
 const handleSubmit = () => {
     const { email, password } = userCredendials
 
-    const loginResponse = Meteor.loginWithPassword({ email }, password, (e) => {
+    Meteor.loginWithPassword({ email }, password, (e) => {
         if (e) {
             const { reason } = e
             errorMessage.value = reason

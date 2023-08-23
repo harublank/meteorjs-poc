@@ -10,6 +10,7 @@ import OrgList from '../components/OrgList.vue'
 import { organizationCollection } from '../../api/organization'
 import { contactsCollection } from '../../api/contacts'
 import { useRouter } from 'vue-router'
+import { Meteor } from 'meteor/meteor'
 const requiredRole = "KEELA_ADMIN"
 
 const router = useRouter()
@@ -140,21 +141,52 @@ const createUserHandler = () => {
     const { name, email, organizationId, role } = userFormData.value
     console.log({ name, email, organizationId, role })
 
-    const createdContact = contactsCollection.insert({
-        name, email, organizationId, role
-    }, (error, doc) => {
-        console.log({ error, doc })
-    },)
+    /* 
+    - create user 
+    - and contacts??
+    - how will user login if there's no email in `user` schema
+    - but having redundant data for user in two schema?
 
-    organizationCollection.update({
-        _id: organizationId
-    }, {
-        $push: {
-            contacts: createdContact
+    user 
+    |email| password | profile.role
+
+    contact 
+    |_id|user_id| org_id|...others
+
+    */
+
+
+    // const createdUser = Meteor.createUser({
+    //     email: email,
+    //     password: "keelapw",
+    //     profile: {
+    //         role: role
+    //     }
+    // })
+
+    // console.log({ createdUser })
+
+    Meteor.call("createContact", {
+        email, role
+    }, (err, userId) => {
+        if (err) {
+            console.log({ err })
+        } else {
+            const createdContact = contactsCollection.insert({
+                name, organizationId, userId
+            }, (error, doc) => {
+                console.log({ error, doc })
+            },)
+
+            organizationCollection.update({
+                _id: organizationId
+            }, {
+                $push: {
+                    contacts: createdContact
+                }
+            })
         }
     })
-    const userOrg = organizationCollection.find({ _id: organizationId })
-
 }
 
 
@@ -171,7 +203,7 @@ const createUserHandler = () => {
                 </Button>
 
                 <Button @click="createUser">
-                    Create User
+                    Create Contact
                 </Button>
             </ButtonGroup>
 
@@ -213,8 +245,8 @@ const createUserHandler = () => {
                             <p>Select user role</p>
                             <select v-model="userFormData.role">
                                 <option value="default">--- Select User Role ---</option>
-                                <option value="admin">Admin</option>
-                                <option value="coordinator">Coordinator</option>
+                                <option value="ORGANIZATION_ADMIN">Admin</option>
+                                <option value="COORDINATOR">Coordinator</option>
                             </select>
                         </div>
 
@@ -235,6 +267,7 @@ const createUserHandler = () => {
             </div>
             <div class="flex gap-4">
                 <div class="relative overflow-x-auto">
+                    <h1>Organization List</h1>
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <th scope="col" class="px-6 py-3">
@@ -248,6 +281,8 @@ const createUserHandler = () => {
                             <th scope="col" class="px-6 py-3">
                                 Contact Number
                             </th>
+
+
                             <th scope="col" class="px-6 py-3">
                                 Actions
                             </th>
@@ -265,6 +300,8 @@ const createUserHandler = () => {
                                 <td class="px-6 py-4">
                                     {{ org.contact }}
                                 </td>
+
+
                                 <td class="px-6 py-4">
                                     <ButtonGroup>
                                         <Button @click="editHandler(org._id)">Edit</Button>

@@ -1,0 +1,47 @@
+<script setup>
+const props = defineProps({
+    title: {
+        type: String,
+        default: "Table for fodder ^_^",
+    },
+    headers: {
+        type: Array,
+        default: []
+    },
+    body: {
+        type: Array,
+        default: []
+    },
+})
+</script>
+
+<template>
+    <div class="mt-4 overflow-x-auto">
+        <h1>{{ title }}</h1>
+
+        <table class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <th scope="col" class="px-6 py-3" v-for="tableHead in headers">
+                    {{ tableHead }}
+                </th>
+            </thead>
+
+            <tbody>
+                <tr v-for="row in body" class="bg-white border-b dark:bg-gray-900 dark:border-gray-700" :key="row._id">
+                    <td v-for="cell in row" class="px-6 py-4">
+                        {{ cell }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <slot name="action-slot"></slot>
+                        <!-- <ButtonGroup>
+                            <Button @click="editHandler(org._id)">Edit</Button>
+                            <Button @click="deleteHandler(org._id)">Delete</Button>
+                            <Button @click="viewOrgHandler(org._id)">View</Button>
+                        </ButtonGroup> -->
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</template>

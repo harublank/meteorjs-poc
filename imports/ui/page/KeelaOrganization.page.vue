@@ -32,7 +32,16 @@ onMounted(() => {
             transform: function (org) {
                 const { contacts, ...rest } = org
 
-                const mappedContacts = contacts.map(contact => contactsCollection.findOne(contact))
+                const mappedContacts = contacts.map(contact => {
+                    const foundContact = contactsCollection.findOne(contact)
+                    console.log(foundContact)
+
+                    const foundUser = Meteor.users.findOne({
+                        _id: foundContact.userId
+                    })
+                    console.log({ foundUser })
+                    return { ...foundContact, ...foundUser }
+                })
 
                 return {
                     contacts: mappedContacts,
