@@ -1,4 +1,9 @@
 <script setup>
+import Button from '../components/ButtonVue.vue'
+import ButtonGroup from '../components/ButtonGroup.vue'
+
+defineEmits(["onDelete", "onEdit"])
+
 const props = defineProps({
     title: {
         type: String,
@@ -33,12 +38,10 @@ const props = defineProps({
                     </td>
 
                     <td class="px-6 py-4">
-                        <slot name="action-slot"></slot>
-                        <!-- <ButtonGroup>
-                            <Button @click="editHandler(org._id)">Edit</Button>
-                            <Button @click="deleteHandler(org._id)">Delete</Button>
-                            <Button @click="viewOrgHandler(org._id)">View</Button>
-                        </ButtonGroup> -->
+                        <ButtonGroup>
+                            <Button @click="$emit('onEdit', row)">Edit</Button>
+                            <Button @click="$emit('onDelete', row)">Delete</Button>
+                        </ButtonGroup>
                     </td>
                 </tr>
             </tbody>

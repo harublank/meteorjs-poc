@@ -32,7 +32,7 @@ onMounted(() => {
             transform: function (org) {
                 const { contacts, ...rest } = org
 
-                const mappedContacts = contacts.map(contact => {
+                const mappedContacts = contacts?.map(contact => {
                     const foundContact = contactsCollection.findOne(contact)
                     console.log(foundContact)
 
